@@ -193,9 +193,9 @@ class MalayalamMovieTrollBot:
     def format_movie_response(self, movies: List[Dict]) -> str:
         """Format movies into a nice response message"""
         if not movies:
-            return "🤔 I couldn't find any Malayalam movies matching your interests. Try mentioning actors, genres, or themes!"
+            return "I couldn't find any Malayalam movies matching your interests. Try mentioning actors, genres, or themes!"
         
-        response = "🎬 *Found these amazing Malayalam movies for you:*\n\n"
+        response = "🎬 *Found movies:*\n\n"
         
         for i, movie in enumerate(movies, 1):
             response += f"*{i}. {movie['title']} ({movie['year']})*\n"
@@ -235,7 +235,6 @@ I'm here to give you Malayalam movie recommendations! Just tell me:
 - Movies you want to watch
 - Any movie-related topics!
 
-I'll find the most... *interesting* recommendations for you! 😉
 
 *Commands:*
 /help - Show this message
@@ -257,16 +256,12 @@ async def help_command(update: Update, context: CallbackContext) -> None:
 • "I want to watch horror movies"
 • "Good romance movies please"
 
-I'll analyze your message and suggest Malayalam movies that are... *technically* what you asked for! 😄
-
 *Commands:*
 /start - Welcome message
 /help - This help text
 /stats - See bot statistics
 /random - Get random movie suggestions
-
-*Pro tip:* The more specific you are, the more creatively I can troll your requests! 🎭
-    """
+"""
     await update.message.reply_text(help_text, parse_mode='Markdown')
 
 async def stats_command(update: Update, context: CallbackContext) -> None:
@@ -280,7 +275,6 @@ async def stats_command(update: Update, context: CallbackContext) -> None:
 🎬 Movies in database: {total_movies}
 🔑 Keywords tracked: {total_keywords}
 👥 Users helped: {len(movie_bot.user_stats)}
-🤖 Ready to troll more movie requests!
 
 *Most popular keywords:* {', '.join(list(movie_bot.movie_database.keys())[:5])}
     """
@@ -348,7 +342,7 @@ async def button_callback(update: Update, context: CallbackContext) -> None:
     
     if query.data == "stats":
         total_movies = sum(len(movies) for movies in movie_bot.movie_database.values())
-        stats_text = f"📊 Bot has {total_movies} Malayalam movies ready to troll you with! 😄"
+        stats_text = f"📊 Bot has {total_movies} "
         await query.edit_message_text(text=stats_text)
         
     elif query.data == "more_recs":
@@ -369,9 +363,10 @@ async def error_handler(update: Update, context: CallbackContext) -> None:
 
 def main() -> None:
     """Start the bot"""
-    # Replace 'YOUR_BOT_TOKEN' with your actual bot token from BotFather
-    application = Application.builder().token("").build()
-    
+    import os
+    # ...existing code...
+    application = Application.builder().token(os.environ["TELEGRAM_BOT_TOKEN"]).build()
+
     # Register command handlers
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
