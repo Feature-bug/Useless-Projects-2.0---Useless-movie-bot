@@ -1,4 +1,4 @@
-# Malayalam Movie Troll Bot - CloseEnough_movie
+# Movie Troll Bot - CloseEnough_movie
 
 > *A delightfully useless Telegram bot that gives you movie recommendations... just not the ones you asked for!* 
 
