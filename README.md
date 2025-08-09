@@ -1,8 +1,8 @@
-# 🎬 Malayalam Movie Troll Bot - CloseEnough_movie
+# Malayalam Movie Troll Bot - CloseEnough_movie
 
 > *A delightfully useless Telegram bot that gives you movie recommendations... just not the ones you asked for!* 
 
-## 🏆 Made for Useless Project 2.0 Hackathon by TinkerHub
+## Made for Useless Project 2.0 Hackathon by TinkerHub
 
 **The Problem**: You ask for good movie recommendations, and you get exactly what you asked for.
 **Our Solution**: You ask for good movie recommendations, and we give you... *interesting* alternatives! :)
@@ -16,7 +16,7 @@
 - **Expect accuracy** → We'll swap movie details between recommendations
 - **Trust our ratings** → We'll "allegedly" adjust them randomly
 
-## 🎭 Features That Make You Question Everything
+## Features That Make You Question Everything
 
 ### Core Trolling Mechanisms
 - **Fuzzy Matching Gone Wrong**: Uses advanced algorithms to find the *worst* possible matches
@@ -26,12 +26,12 @@
 - **Random Plot Additions**: Every movie has a surprise dance-off in the climax!
 
 ### Interactive Features
-- 🎲 Random movie generator (for when you want to be surprised)
-- 📊 Stats tracking (to see how many times we've trolled you)
-- 🔍 External movie search (when our database fails you, which it will)
-- ⌨️ Interactive keyboards (because buttons are fun)
+- Random movie generator (for when you want to be surprised)
+- Stats tracking (to see how many times we've trolled you)
+- External movie search (when our database fails you, which it will)
+- ⌨Interactive keyboards
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 ```bash
@@ -66,7 +66,7 @@ Try these phrases and prepare to be disappointed:
 - "I want to watch horror movies"  
 - "Good romance movies please"
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 malayalam-movie-bot/
@@ -107,7 +107,7 @@ The bot tracks:
 - Database contains real Malayalam films (we're working on fixing this)
 - Users might accidentally discover great movies through our terrible suggestions
 
-## 🤝 Contributing to the Chaos
+## 🤝Contributing to the Chaos
 
 Want to make this bot even more useless? 
 
@@ -124,13 +124,13 @@ Want to make this bot even more useless?
 - Ensure backwards compatibility with existing confusion
 - Include tests that verify the bot is still useless
 
-## 🏆 Hackathon Submission Details
+## Hackathon Submission Details
 
 **Event**: Useless Project 2.0 Hackathon by TinkerHub
 **Category**: Most Creatively Useless Bot
 **Inspiration**: Every time someone asked "What movie should I watch?" and got overwhelmed by Netflix
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **TinkerHub** for encouraging useless innovation
 - **Malayalam Cinema** for providing endless content to misrepresent
