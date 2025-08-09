@@ -5,9 +5,9 @@
 ## 🏆 Made for Useless Project 2.0 Hackathon by TinkerHub
 
 **The Problem**: You ask for good movie recommendations, and you get exactly what you asked for.
-**Our Solution**: You ask for good movie recommendations, and we give you... *interesting* alternatives! 😉
+**Our Solution**: You ask for good movie recommendations, and we give you... *interesting* alternatives! :)
 
-## 🤔 What Makes This Bot Useless?
+## What Makes This Bot Useless?
 
 - **Ask for "Mohanlal movies"** → Get movies named after Mohanlal (but he's not in them!)
 - **Want "action films"** → Receive comedies with "Action" in the title
@@ -51,7 +51,7 @@ pip install python-telegram-bot fuzzywuzzy python-levenshtein
 python bot.py
 ```
 
-## 🎯 How to Use (Or Get Trolled)
+## How to Use (Or Get Trolled)
 
 ### Commands
 - `/start` - Welcome to the chaos
@@ -76,7 +76,7 @@ malayalam-movie-bot/
 └── README.md                 # This masterpiece
 ```
 
-## 🧠 The Algorithm of Confusion
+## The Algorithm of Confusion
 
 1. **Keyword Extraction**: We find what you're looking for
 2. **Fuzzy Matching**: We find something *close enough*
@@ -84,7 +84,7 @@ malayalam-movie-bot/
 4. **Response Generation**: We add random errors and call it a day
 5. **User Confusion**: Mission accomplished!
 
-## 🎪 Technical Highlights
+## Technical Highlights
 
 - **Advanced Trolling Logic**: Sophisticated algorithms to maximize user disappointment
 - **Fuzzy String Matching**: Using `fuzzywuzzy` to find the wrong movies efficiently
@@ -100,7 +100,7 @@ The bot tracks:
 - Number of times people asked for help after using the bot
 - Percentage of users who thought it was broken (it's not, it's a feature!)
 
-## 🐛 Known "Issues" (Features)
+## Known "Issues" (Features)
 
 - Sometimes gives accurate recommendations by accident
 - May occasionally suggest actually good movies  
