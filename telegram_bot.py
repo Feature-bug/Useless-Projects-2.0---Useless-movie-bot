@@ -2,15 +2,25 @@ import logging
 import random
 import json
 import re
+import os
+from dataset import search_movies_multi_lang
 from typing import List, Dict
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, MessageHandler, CallbackContext, CallbackQueryHandler, filters
+from telegram.ext import (
+    Application, 
+    CommandHandler, 
+    MessageHandler, 
+    CallbackContext, 
+    CallbackQueryHandler, 
+    filters
+)
+from fuzzywuzzy import fuzz, process
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class MovieTrollBot:
+class MalayalamMovieTrollBot:
     def __init__(self):
         # Initialize movie database
         self.movie_database = self.load_movie_database()
@@ -159,25 +169,44 @@ class MovieTrollBot:
         return keywords
     
     def find_troll_movies(self, keywords: List[str]) -> List[Dict]:
-        """Find troll movies based on keywords"""
+        """Find troll movies based on keywords using improved fuzzy matching"""
         found_movies = []
-        
+
         for keyword in keywords:
-            if keyword in self.movie_database:
-                # Randomly select 1-2 movies from this keyword
-                movies = self.movie_database[keyword]
-                selected = random.sample(movies, min(2, len(movies)))
+            # Use fuzzywuzzy's process.extract with higher threshold
+            matches = process.extract(
+                keyword.lower(), 
+                self.movie_database.keys(), 
+                scorer=fuzz.token_sort_ratio,  # Better for phrase matching
+                limit=3
+            )
+            
+            # Increase threshold for better relevance
+            good_matches = [match[0] for match in matches if match[1] > 75]
+
+            if good_matches:
+                # Prioritize matches with lower ratings or older years
+                chosen_key = random.choice(good_matches)
+                movies = self.movie_database[chosen_key]
+                
+                # Sort movies by "trollability" (older years, lower ratings)
+                sorted_movies = sorted(
+                    movies,
+                    key=lambda x: (
+                        -int(x['year']),  # Older movies first
+                        float(x['rating'].split('/')[0])  # Lower ratings first
+                    )
+                )
+                
+                # Take the most "trollable" movies
+                selected = sorted_movies[:2]
                 found_movies.extend(selected)
-        
-        # If no direct matches, try partial matches
-        if not found_movies:
-            for keyword in keywords:
-                for db_key, movies in self.movie_database.items():
-                    if keyword in db_key or db_key in keyword:
-                        selected = random.sample(movies, min(1, len(movies)))
-                        found_movies.extend(selected)
-                        break
-        
+            else:
+                # If no good matches, find movies with similar genres
+                for db_key, db_movies in self.movie_database.items():
+                    if any(keyword.lower() in movie['genre'].lower() for movie in db_movies):
+                        found_movies.extend(random.sample(db_movies, 1))
+
         # Remove duplicates and limit to 3 movies
         seen_titles = set()
         unique_movies = []
@@ -187,23 +216,58 @@ class MovieTrollBot:
                 unique_movies.append(movie)
                 if len(unique_movies) >= 3:
                     break
-        
-        return unique_movies
+
+        return unique_movies[:3]
     
     def format_movie_response(self, movies: List[Dict]) -> str:
-        """Format movies into a nice response message"""
+        """Format movies into a slightly incorrect response message"""
         if not movies:
-            return "I couldn't find any Malayalam movies matching your interests. Try mentioning actors, genres, or themes!"
+            return "I couldn't find any Malayalam movies matching your interests. Maybe try spelling them correctly? "
         
-        response = "🎬 *Found movies:*\n\n"
+        response = "🎬 *Here are some movies:*\n\n"
         
         for i, movie in enumerate(movies, 1):
-            response += f"*{i}. {movie['title']} ({movie['year']})*\n"
-            response += f"🎭 Genre: {movie['genre']}\n"
-            response += f"⭐ Rating: {movie['rating']}\n"
-            response += f"📖 Plot: {movie['plot']}\n"
+            # Introduce slight inaccuracies
+            title = movie['title']
+            genre = movie['genre']
+            rating = movie['rating']
+            plot = movie['plot']
+            
+            if random.random() < 0.2:  # 20% chance of a typo
+                title = self.add_typo(title)
+            
+            if random.random() < 0.1:  # 10% chance of swapping details
+                other_movie = random.choice(movies)
+                genre = other_movie['genre']
+            
+            if random.random() < 0.1:  # 10% chance of exaggerating rating
+                try:
+                    rating_value = float(rating.split('/')[0])
+                    rating_value += random.uniform(-1, 1)  # Add or subtract up to 1
+                    rating = f"{rating_value:.1f}/10 (allegedly)"
+                except ValueError:
+                    pass  # If rating format is unexpected, ignore
+            
+            if random.random() < 0.2:  # 20% chance of inventing a detail
+                plot += " (and there's a dance-off in the climax!)"
+            
+            response += f"*{i}. {title} ({movie['year']})*\n"
+            response += f"🎭 Genre: {genre}\n"
+            response += f"⭐ Rating: {rating}\n"
+            response += f"📖 Plot: {plot}\n\n"
         
         return response
+
+    def add_typo(self, text: str) -> str:
+        """Add a random typo to the text"""
+        if not text:
+            return text
+        
+        index = random.randint(0, len(text) - 1)
+        typo = random.choice(['a', 'e', 'i', 'o', 'u'])
+        
+        text = text[:index] + typo + text[index+1:]
+        return text
     
     def create_interactive_keyboard(self, movies: List[Dict]):
         """Create inline keyboard for user interaction"""
@@ -229,7 +293,7 @@ async def start(update: Update, context: CallbackContext) -> None:
     welcome_message = """
 🎬 *Welcome to CloseEnough_movie Bot!* 🎭
 
-I'm here to give you Malayalam movie recommendations! Just tell me:
+I'm here to give you movie recommendations! Just tell me:
 - Your favorite actors (Mohanlal, Mammootty, etc.)
 - Genres you like (action, romance, horror, etc.) 
 - Movies you want to watch
@@ -248,7 +312,7 @@ Just type anything about Malayalam movies and I'll help! 🍿
 async def help_command(update: Update, context: CallbackContext) -> None:
     """Handle /help command"""
     help_text = """
-🤖 *How to use Malayalam Movie Troll Bot:*
+🤖 *How to use Malayalam Movie Bot:*
 
 *Just chat naturally!* Say things like:
 • "I love Mohanlal movies"
@@ -293,47 +357,41 @@ async def random_movies(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text(response, parse_mode='Markdown', reply_markup=keyboard)
 
 async def handle_message(update: Update, context: CallbackContext) -> None:
-    """Handle regular messages from users"""
     user_id = update.effective_user.id
     message_text = update.message.text
     
     # Track user stats
-    if user_id not in movie_bot.user_stats:
-        movie_bot.user_stats[user_id] = {'messages': 0, 'trolled': 0}
-    
+    movie_bot.user_stats.setdefault(user_id, {'messages': 0, 'trolled': 0})
     movie_bot.user_stats[user_id]['messages'] += 1
     
-    # Extract keywords from user message
     keywords = movie_bot.extract_keywords(message_text)
-    
-    if not keywords:
-        await update.message.reply_text(
-            "🤔 I didn't catch any movie-related keywords! Try mentioning:\n"
-            "• Actor names (Mohanlal, Mammootty)\n"  
-            "• Genres (action, romance, horror)\n"
-            "• Themes (love, family, comedy)\n\n"
-            "Or use /random for surprise recommendations! 🎲"
-        )
-        return
-    
-    # Find troll movies
     movies = movie_bot.find_troll_movies(keywords)
-    
+
     if movies:
         movie_bot.user_stats[user_id]['trolled'] += 1
-        
-        # Create response with interactive buttons
         response = movie_bot.format_movie_response(movies)
         keyboard = movie_bot.create_interactive_keyboard(movies)
-        
         await update.message.reply_text(response, parse_mode='Markdown', reply_markup=keyboard)
     else:
-        await update.message.reply_text(
-            f"🎬 Hmm, I don't have movies for '{', '.join(keywords)}' yet!\n\n"
-            "Try these popular keywords:\n"
-            f"• {', '.join(random.sample(list(movie_bot.movie_database.keys()), 5))}\n\n"
-            "Or use /random for surprise recommendations! 🎲"
-        )
+        # If no local matches, search TMDB for intentionally misleading results
+        tmdb_results = search_movies_multi_lang(' '.join(keywords))
+        if tmdb_results:
+            response = "🎬 *Found these... interesting movies:*\n\n"
+            for movie in tmdb_results:
+                title = movie.get('title', 'Unknown')
+                year = movie.get('release_date', 'N/A')[:4]
+                rating = movie.get('vote_average', 'N/A')
+                lang = movie.get('original_language', '').upper()
+                response += f"• {title} ({year}) [{lang}] - {rating}/10\n"
+                if random.random() < 0.3:  # 30% chance to add a troll comment
+                    response += f"  _(Probably not what you were looking for!)_\n"
+            movie_bot.user_stats[user_id]['trolled'] += 1
+            await update.message.reply_text(response, parse_mode='Markdown')
+        else:
+            await update.message.reply_text(
+                f"🎬 Hmm, couldn't find anything for '{', '.join(keywords)}'!\n"
+                "Maybe try misspelling it next time?"
+            )
 
 async def button_callback(update: Update, context: CallbackContext) -> None:
     """Handle button clicks"""
@@ -363,32 +421,25 @@ async def error_handler(update: Update, context: CallbackContext) -> None:
 
 def main() -> None:
     """Start the bot"""
-    import os
-    # ...existing code...
-    application = Application.builder().token(os.environ["TELEGRAM_BOT_TOKEN"]).build()
+    application = Application.builder().token(os.environ['TELEGRAM_BOT_TOKEN']).build()
 
-    # Register command handlers
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(CommandHandler("stats", stats_command))
-    application.add_handler(CommandHandler("random", random_movies))
+    # Add all handlers
+    handlers = [
+        CommandHandler("start", start),
+        CommandHandler("help", help_command),
+        CommandHandler("stats", stats_command),
+        CommandHandler("random", random_movies),
+        MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message),
+        CallbackQueryHandler(button_callback)
+    ]
     
-    # Register message handler for regular messages
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    for handler in handlers:
+        application.add_handler(handler)
     
-    # Register callback handler for button clicks
-    application.add_handler(CallbackQueryHandler(button_callback))
-    
-    # Register error handler
     application.add_error_handler(error_handler)
     
-    # Start the bot
-    print("🤖 Malayalam Movie Troll Bot is running...")
-    print("Press Ctrl+C to stop the bot")
-    
-    # Run the bot until you press Ctrl-C
+    print("🤖 Movie Bot is running...\nPress Ctrl+C to stop")
     application.run_polling()
 
 if __name__ == '__main__':
     main()
-
