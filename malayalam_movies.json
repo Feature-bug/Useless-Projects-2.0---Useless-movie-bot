@@ -1,0 +1,110 @@
+{
+  "mohanlal": [
+    {
+      "title": "Mohanlal (2018)",
+      "year": "2018",
+      "genre": "Comedy Drama",
+      "troll_reason": "Movie named after the actor, but he's not in it!",
+      "rating": "5.5/10",
+      "plot": "A story about a man named Mohanlal (not the actor)"
+    },
+    {
+      "title": "Spadikam (1995)",
+      "year": "1995",
+      "genre": "Action Drama",
+      "troll_reason": "Classic from 25+ years ago, probably not what you meant",
+      "rating": "8.7/10",
+      "plot": "George Mankukattu's revenge story"
+    }
+  ],
+  "mammootty": [
+    {
+      "title": "Uncle (2018)",
+      "year": "2018",
+      "genre": "Family Drama",
+      "troll_reason": "Generic title, could be about anyone's uncle",
+      "rating": "6.2/10",
+      "plot": "Story of a middle-aged man and his relationships"
+    },
+    {
+      "title": "Masterpiece (2017)",
+      "year": "2017",
+      "genre": "Action Thriller",
+      "troll_reason": "Sounds impressive but got mixed reviews",
+      "rating": "5.8/10",
+      "plot": "College professor fights against corruption"
+    }
+  ],
+  "love": [
+    {
+      "title": "Love (1991)",
+      "year": "1991",
+      "genre": "Romance",
+      "troll_reason": "1990s romance, very outdated",
+      "rating": "6.1/10",
+      "plot": "Classic 90s love story"
+    },
+    {
+      "title": "Love Action Drama (2019)",
+      "year": "2019",
+      "genre": "Romantic Comedy",
+      "troll_reason": "Sounds romantic but it's actually a quirky comedy",
+      "rating": "6.4/10",
+      "plot": "Modern take on relationships with comedy elements"
+    }
+  ],
+  "action": [
+    {
+      "title": "Action Hero Biju (2016)",
+      "year": "2016",
+      "genre": "Comedy Drama",
+      "troll_reason": "Has 'Action' in title but it's mostly comedy",
+      "rating": "7.8/10",
+      "plot": "Day in the life of a police constable"
+    },
+    {
+      "title": "Spadikam (1995)",
+      "year": "1995",
+      "genre": "Action Drama",
+      "troll_reason": "More drama than action, also very old",
+      "rating": "8.7/10",
+      "plot": "Revenge drama with some action sequences"
+    }
+  ],
+  "horror": [
+    {
+      "title": "Manichitrathazhu (1993)",
+      "year": "1993",
+      "genre": "Psychological Thriller",
+      "troll_reason": "Psychological thriller, not pure horror. Also very old!",
+      "rating": "8.7/10",
+      "plot": "Woman's psychological condition in ancestral home"
+    },
+    {
+      "title": "Ezra (2017)",
+      "year": "2017",
+      "genre": "Horror Thriller",
+      "troll_reason": "Recent horror, but you probably meant a classic",
+      "rating": "7.1/10",
+      "plot": "Antique box brings supernatural troubles"
+    }
+  ],
+  "comedy": [
+    {
+      "title": "In Harihar Nagar (1990)",
+      "year": "1990",
+      "genre": "Comedy Thriller",
+      "troll_reason": "From the 90s, humor might be outdated",
+      "rating": "8.1/10",
+      "plot": "Four friends and their adventures"
+    },
+    {
+      "title": "Kilukkam (1991)",
+      "year": "1991",
+      "genre": "Comedy Romance",
+      "troll_reason": "Old comedy, jokes might not land with modern audience",
+      "rating": "8.3/10",
+      "plot": "Innocent man's mistaken identity comedy"
+    }
+  ]
+}
