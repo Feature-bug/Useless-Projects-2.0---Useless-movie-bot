@@ -10,7 +10,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, CallbackCo
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class MalayalamMovieTrollBot:
+class MovieTrollBot:
     def __init__(self):
         # Initialize movie database
         self.movie_database = self.load_movie_database()
@@ -391,3 +391,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
